@@ -1,0 +1,164 @@
+package com.company;
+
+import java.util.Scanner;
+
+public class Bee {
+
+    static int beesRow = -1;
+    static int beesCol = -1;
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        int n = Integer.parseInt(scan.nextLine());
+        char[][] territory = new char[n][n];
+        int pollinatedFlowers = 0;
+
+        for (int i = 0; i < territory.length; i++) {
+            char[] arr = scan.nextLine().toCharArray();
+            for (int j = 0; j < territory[i].length; j++) {
+                territory[i][j] = arr[j];
+                if (arr[j] == 'B') {
+                    beesRow = i;
+                    beesCol = j;
+                }
+            }
+        }
+
+        String command = scan.nextLine();
+
+        while (!command.equals("End")) {
+            boolean flewAway = false;
+            switch (command) {
+                case "up":
+                    int[] wannaGoUp = {beesRow - 1, beesCol};
+                    if (isValidIndex(wannaGoUp, territory)) {
+                        if (territory[beesRow - 1][beesCol] == '.') {
+                            movingUp(territory);
+                        } else if (territory[beesRow - 1][beesCol] == 'f') {
+                            pollinatedFlowers++;
+                            movingUp(territory);
+                        } else if (territory[beesRow - 1][beesCol] == 'O') {
+                            movingUp(territory);
+                            continue;
+                        }
+                    } else {
+                        flewAway = isFlewAway(territory);
+                    }
+                    break;
+                case "down":
+                    int[] wannaGoDown = {beesRow + 1, beesCol};
+                    if (isValidIndex(wannaGoDown, territory)) {
+                        if (territory[beesRow + 1][beesCol] == '.') {
+                            moveDown(territory);
+                        } else if (territory[beesRow + 1][beesCol] == 'f') {
+                            pollinatedFlowers++;
+                            moveDown(territory);
+                        } else if (territory[beesRow + 1][beesCol] == 'O') {
+                            moveDown(territory);
+                            continue;
+                        }
+                    } else {
+                        flewAway = isFlewAway(territory);
+                    }
+                    break;
+                case "left":
+                    int[] wannaGoLeft = {beesRow, beesCol - 1};
+                    if (isValidIndex(wannaGoLeft, territory)) {
+                        if (territory[beesRow][beesCol - 1] == '.') {
+                            moveLeft(territory);
+                        } else if (territory[beesRow][beesCol - 1] == 'f') {
+                            pollinatedFlowers++;
+                            moveLeft(territory);
+                        } else if (territory[beesRow][beesCol - 1] == 'O') {
+                            moveLeft(territory);
+                            continue;
+                        }
+                    } else {
+                        flewAway = isFlewAway(territory);
+                    }
+                    break;
+                case "right":
+                    int[] wannaGoRight = {beesRow, beesCol + 1};
+                    if (isValidIndex(wannaGoRight, territory)) {
+                        if (territory[beesRow][beesCol + 1] == '.') {
+                            moveRight(territory);
+                        } else if (territory[beesRow][beesCol + 1] == 'f') {
+                            pollinatedFlowers++;
+                            moveRight(territory);
+                        } else if (territory[beesRow][beesCol + 1] == 'O') {
+                            moveRight(territory);
+                            continue;
+                        }
+                    } else {
+                        flewAway = isFlewAway(territory);
+                    }
+                    break;
+            }
+
+            if (flewAway) {
+                break;
+            }
+
+            command = scan.nextLine();
+        }
+
+        if (pollinatedFlowers >= 5) {
+            System.out.println("Great job, the bee manage to pollinate " + pollinatedFlowers + " flowers!"
+            );
+        } else {
+            System.out.println("The bee couldn't pollinate the flowers, she needed " + (5 - pollinatedFlowers) + " flowers more"
+            );
+        }
+
+        printMatrix(territory);
+    }
+
+    private static boolean isFlewAway(char[][] territory) {
+        System.out.println("The bee got lost!");
+        territory[beesRow][beesCol] = '.';
+        return true;
+    }
+
+    private static void moveRight(char[][] territory) {
+        territory[beesRow][beesCol] = '.';
+        territory[beesRow][beesCol + 1] = 'B';
+        beesCol += 1;
+    }
+
+    private static void moveLeft(char[][] territory) {
+        territory[beesRow][beesCol] = '.';
+        territory[beesRow][beesCol - 1] = 'B';
+        beesCol -= 1;
+    }
+
+    private static void moveDown(char[][] territory) {
+        territory[beesRow][beesCol] = '.';
+        territory[beesRow + 1][beesCol] = 'B';
+        beesRow += 1;
+    }
+
+    private static void movingUp(char[][] territory) {
+        territory[beesRow][beesCol] = '.';
+        territory[beesRow - 1][beesCol] = 'B';
+        beesRow -= 1;
+    }
+
+    private static boolean isValidIndex(int[] coordinates, char[][] matrix) {
+        int row = coordinates[0];
+        int col = coordinates[1];
+        if (row >= 0 && row < matrix.length) {
+            if (col >= 0 && col < matrix[row].length) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void printMatrix(char[][] territory) {
+        for (char[] row : territory) {
+            for (char col : row) {
+                System.out.print(col);
+            }
+            System.out.println();
+        }
+    }
+}
