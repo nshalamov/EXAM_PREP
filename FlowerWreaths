@@ -1,0 +1,74 @@
+package com.company;
+
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class FlowerWreaths {
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        ArrayDeque<Integer> liliesStack = new ArrayDeque<>();
+        ArrayDeque<Integer> rosesQueue = new ArrayDeque<>();
+        int storedFlowers = 0;
+        int wreaths = 0;
+
+        Arrays.stream(scan.nextLine().split(", "))
+                .map(Integer::valueOf)
+                .forEach(liliesStack::push);
+
+        Arrays.stream(scan.nextLine().split(", "))
+                .map(Integer::valueOf)
+                .forEach(rosesQueue::offer);
+
+        while(!liliesStack.isEmpty() && !rosesQueue.isEmpty()) {
+            int currentLily = liliesStack.peek();
+            int currentRose = rosesQueue.peek();
+            int currentWreath = currentLily + currentRose;
+
+            if (currentWreath == 15) {
+                deletion(liliesStack, rosesQueue);
+                wreaths++;
+                continue;
+            }
+
+            if (currentWreath < 15) {
+                storedFlowers += currentWreath;
+                deletion(liliesStack, rosesQueue);
+                continue;
+            }
+
+            if (currentWreath % 2 == 0) {
+                do {
+                    currentLily -= 2;
+                    currentWreath = currentLily + currentRose;
+                } while (currentWreath > 15 && currentLily > 0);
+                storedFlowers += currentWreath;
+                deletion(liliesStack, rosesQueue);
+            } else {
+                do {
+                    currentLily -= 2;
+                    currentWreath = currentLily + currentRose;
+                } while (currentWreath > 15 && currentLily > 0);
+                wreaths++;
+                deletion(liliesStack, rosesQueue);
+            }
+        }
+
+        wreaths += storedFlowers / 15;
+
+        if (wreaths >= 5) {
+            System.out.println
+                    ("You made it, you are going to the competition with " + wreaths +  " wreaths!");
+        } else {
+            System.out.println
+                    ("You didn't make it, you need " + (5 - wreaths) + " wreaths more!");
+        }
+    }
+
+    private static void deletion(ArrayDeque<Integer> liliesStack, ArrayDeque<Integer> rosesQueue) {
+        liliesStack.pop();
+        rosesQueue.poll();
+    }
+}
