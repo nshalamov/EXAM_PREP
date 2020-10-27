@@ -1,0 +1,77 @@
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Garden {
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        int[] dimensions = Arrays.stream(scan.nextLine().split("\\s+"))
+                .mapToInt(Integer::parseInt)
+                .toArray();
+
+        int[][] garden = new int[dimensions[0]][dimensions[0]];
+
+        for (int i = 0; i < garden.length; i++) {
+            for (int j = 0; j < garden[i].length; j++) {
+                garden[i][j] = 0;
+            }
+        }
+
+        String command = scan.nextLine();
+
+        while(!command.equals("Bloom Bloom Plow")) {
+            int[] fPosition = Arrays.stream(command.split("\\s+"))
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
+
+            if (isValidIndex(fPosition, garden)) {
+                bloomTheFlowers(fPosition, garden);
+            } else {
+                System.out.println("Invalid coordinates");
+            }
+
+            command = scan.nextLine();
+        }
+        printMatrix(garden);
+    }
+
+    private static void bloomTheFlowers(int[] fPosition, int[][] garden) {
+        int row = fPosition[0];
+        int col = fPosition[1];
+
+        garden[row][col]++;
+
+        for (int i = 0; i < garden[row].length; i++) {
+            if (col != i) {
+                garden[row][i]++;
+            }
+        }
+
+        for (int i = 0; i < garden.length; i++) {
+            if (row != i) {
+                garden[i][col]++;
+            }
+        }
+    }
+
+    private static boolean isValidIndex(int[] coordinates, int[][] matrix) {
+        int row = coordinates[0];
+        int col = coordinates[1];
+        if (row >= 0 && row < matrix.length) {
+            if (col >= 0 && col < matrix[row].length) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private static void printMatrix(int[][] garden) {
+        for (int[] row : garden) {
+            for (int col : row) {
+                System.out.print(col + " ");
+            }
+            System.out.println();
+        }
+    }
+
+}
